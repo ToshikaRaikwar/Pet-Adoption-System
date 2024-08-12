@@ -2,7 +2,6 @@
   "expo": {
     "name": "PetAdoptionSystem",
     "slug": "PetAdoptionSystem",
-    "entryPoint": "./src/App.js",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

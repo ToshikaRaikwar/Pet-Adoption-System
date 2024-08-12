@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Dimensions } from 'react-native';
-import Amplify from 'aws-amplify';
-// import awsconfig from '@/src/aws-exports';
-
-// Amplify.configure(awsconfig);
 
 const { width, height } = Dimensions.get('window');
 
-const App = () => {
+const UserAuthentication = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   const toggleForm = () => {
@@ -16,7 +12,7 @@ const App = () => {
 
   return (
     <ImageBackground
-      source={require('../assets/images/banner2.png')} // Update this path to your image
+      source={require('../../assets/images/banner2.png')} 
       style={styles.background}
       resizeMode="cover"
     >
@@ -77,13 +73,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: '5%', // Adds padding to ensure content doesn’t touch the edges
+    paddingHorizontal: '5%', 
   },
   box: {
-    width: width * 0.8, // Responsive width: 90% of the screen width
-    maxWidth: 400, // Maximum width for larger screens
+    width: width * 0.8, 
+    maxWidth: 400, 
     padding: 20,
-    top:-50,
+    top: -50,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 10,
     shadowColor: '#000',
@@ -129,4 +125,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default UserAuthentication;
