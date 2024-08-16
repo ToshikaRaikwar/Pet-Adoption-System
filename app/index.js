@@ -1,13 +1,65 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Dimensions } from 'react-native';
+import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
+import userPool from '../src/UserPool'// Import your user pool configuration
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const UserAuthentication = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(''); // Add this line
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
+  };
+
+  const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      console.log('Passwords do not match');
+      return;
+    }
+
+    const signUpParams = {
+      Username: username,
+      Password: password,
+      Attributes: [
+        { Name: 'email', Value: email },
+        { Name: 'phone_number', Value: phoneNumber } // Correct attribute format
+      ],
+    };
+
+    userPool.signUp(signUpParams.Username, signUpParams.Password, signUpParams.Attributes, null, (err, data) => {
+      if (err) {
+        console.log('Error signing up:', err.message);
+      } else {
+        console.log('Sign up successful:', data);
+      }
+    });
+  };
+
+  const handleLogin = async () => {
+    const authenticationDetails = new AuthenticationDetails({
+      Username: username,
+      Password: password,
+    });
+
+    const cognitoUser = new CognitoUser({
+      Username: username,
+      Pool: userPool,
+    });
+
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: (result) => {
+        console.log('Login successful:', result);
+      },
+      onFailure: (err) => {
+        console.log('Error logging in:', err.message);
+      },
+    });
   };
 
   return (
@@ -24,6 +76,8 @@ const UserAuthentication = () => {
             <TextInput
               style={styles.input}
               placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
             />
           )}
           
@@ -31,23 +85,38 @@ const UserAuthentication = () => {
             style={styles.input}
             placeholder="Email"
             keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
           />
           
           <TextInput
             style={styles.input}
             placeholder="Password"
             secureTextEntry
+            value={password}
+            onChangeText={setPassword}
           />
           
           {!isLogin && (
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              secureTextEntry
-            />
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Phone Number"
+                keyboardType="phone-pad"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+              />
+            </>
           )}
           
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={isLogin ? handleLogin : handleSignup}>
             <Text style={styles.buttonText}>{isLogin ? 'Login' : 'Signup'}</Text>
           </TouchableOpacity>
           

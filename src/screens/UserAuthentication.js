@@ -5,9 +5,22 @@ const { width, height } = Dimensions.get('window');
 
 const UserAuthentication = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(''); // Add this line
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
+  };
+
+  const handleLogin = () => {
+    // Call the login function from your backend
+  };
+
+  const handleSignup = () => {
+    // Call the signup function from your backend
   };
 
   return (
@@ -24,6 +37,8 @@ const UserAuthentication = () => {
             <TextInput
               style={styles.input}
               placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
             />
           )}
           
@@ -31,23 +46,38 @@ const UserAuthentication = () => {
             style={styles.input}
             placeholder="Email"
             keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
           />
           
           <TextInput
             style={styles.input}
             placeholder="Password"
             secureTextEntry
+            value={password}
+            onChangeText={setPassword}
           />
           
           {!isLogin && (
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              secureTextEntry
-            />
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Phone Number"
+                keyboardType="phone-pad"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+              />
+            </>
           )}
           
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={isLogin ? handleLogin : handleSignup}>
             <Text style={styles.buttonText}>{isLogin ? 'Login' : 'Signup'}</Text>
           </TouchableOpacity>
           
