@@ -1,4 +1,4 @@
-  const awsconfig = {
+const awsconfig = {
     Auth: {
      
       region: 'ap-south-1',

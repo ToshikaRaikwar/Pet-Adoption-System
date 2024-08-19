@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Dimensions } from 'react-native';
+import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
+import UserPool from '../../app/UserPool'
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const UserAuthentication = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,18 +11,55 @@ const UserAuthentication = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState(''); // Add this line
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
   };
 
-  const handleLogin = () => {
-    // Call the login function from your backend
+  const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      console.log('Passwords do not match');
+      return;
+    }
+
+    const signUpParams = {
+      Username: username,
+      Password: password,
+      Attributes: [
+        { Name: 'email', Value: email },
+        { Name: 'phone_number', Value: phoneNumber } 
+      ],
+    };
+
+    UserPool.signUp(signUpParams.Username, signUpParams.Password, signUpParams.Attributes, null, (err, data) => {
+      if (err) {
+        console.log('Error signing up:', err.message);
+      } else {
+        console.log('Sign up successful:', data);
+      }
+    });
   };
 
-  const handleSignup = () => {
-    // Call the signup function from your backend
+  const handleLogin = async () => {
+    const authenticationDetails = new AuthenticationDetails({
+      Username: username,
+      Password: password,
+    });
+
+    const cognitoUser = new CognitoUser({
+      Username: username,
+      Pool: UserPool,
+    });
+
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: (result) => {
+        console.log('Login successful:', result);
+      },
+      onFailure: (err) => {
+        console.log('Error logging in:', err.message);
+      },
+    });
   };
 
   return (
