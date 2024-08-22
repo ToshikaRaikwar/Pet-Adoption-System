@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Dimensions } from 'react-native';
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
-import UserPool from '../../app/UserPool'
+import UserPool from '../../app/UserPool';
 
 const { width } = Dimensions.get('window');
 
@@ -12,9 +12,12 @@ const UserAuthentication = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [otp, setOtp] = useState('');
+  const [isFormComplete, setIsFormComplete] = useState(false);
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
+    setIsFormComplete(false); 
   };
 
   const handleSignup = async () => {
@@ -28,7 +31,7 @@ const UserAuthentication = () => {
       Password: password,
       Attributes: [
         { Name: 'email', Value: email },
-        { Name: 'phone_number', Value: phoneNumber } 
+        { Name: 'phone_number', Value: phoneNumber },
       ],
     };
 
@@ -37,6 +40,26 @@ const UserAuthentication = () => {
         console.log('Error signing up:', err.message);
       } else {
         console.log('Sign up successful:', data);
+        setOtp('');
+        setIsFormComplete(true); 
+        alert('Please enter the OTP sent to your phone or email:');
+      }
+    });
+  };
+
+  const handleOtpVerification = async () => {
+    const user = new CognitoUser({
+      Username: username,
+      Pool: UserPool,
+    });
+
+    user.confirmRegistration(otp, true, (err, data) => {
+      if (err) {
+        console.log('Error verifying OTP:', err.message);
+        alert('Invalid OTP. Please try again.');
+      } else {
+        console.log('OTP verified successfully:', data);
+        alert('Account created successfully! You can now log in.');
       }
     });
   };
@@ -64,41 +87,36 @@ const UserAuthentication = () => {
 
   return (
     <ImageBackground
-      source={require('../../assets/images/banner2.png')} 
+      source={require('../../assets/images/banner2.png')}
       style={styles.background}
       resizeMode="cover"
     >
       <View style={styles.container}>
         <View style={styles.box}>
           <Text style={styles.title}>{isLogin ? 'Login' : 'Signup'}</Text>
-          
-          {!isLogin && (
-            <TextInput
-              style={styles.input}
-              placeholder="Username"
-              value={username}
-              onChangeText={setUsername}
-            />
-          )}
-          
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-          
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          
+
           {!isLogin && (
             <>
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                value={username}
+                onChangeText={setUsername}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Confirm Password"
@@ -113,13 +131,49 @@ const UserAuthentication = () => {
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
               />
+              {!isFormComplete && (
+                <TouchableOpacity style={styles.button} onPress={handleSignup}>
+                  <Text style={styles.buttonText}>Signup</Text>
+                </TouchableOpacity>
+              )}
             </>
           )}
-          
-          <TouchableOpacity style={styles.button} onPress={isLogin ? handleLogin : handleSignup}>
-            <Text style={styles.buttonText}>{isLogin ? 'Login' : 'Signup'}</Text>
-          </TouchableOpacity>
-          
+
+          {isFormComplete && !isLogin && (
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="OTP"
+                value={otp}
+                onChangeText={setOtp}
+              />
+              <TouchableOpacity style={styles.button} onPress={handleOtpVerification}>
+                <Text style={styles.buttonText}>Verify OTP</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          {isLogin && (
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                value={username}
+                onChangeText={setUsername}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                <Text style={styles.buttonText}>Login</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
           <TouchableOpacity onPress={toggleForm}>
             <Text style={styles.toggleText}>
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Login"}
@@ -136,17 +190,17 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: '5%', 
+    paddingHorizontal: '5%',
   },
   box: {
-    width: width * 0.8, 
-    maxWidth: 400, 
+    width: width * 0.8,
+    maxWidth: 400,
     padding: 20,
     top: -50,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
