@@ -1,6 +1,8 @@
 import React from 'react';
+
 import { Provider } from 'react-native-paper';
 import { DefaultTheme } from 'react-native-paper';
+import Homepage from '../app/screens/Homepage';
 import UserAuthentication from '../app/screens/UserAuthentication';
 
 const theme = {
@@ -15,7 +17,10 @@ const theme = {
 export default function App() {
   return (
     <Provider theme={theme}>
-      <UserAuthentication />
+
+      <Homepage />
+      
     </Provider>
+    
   );
 }

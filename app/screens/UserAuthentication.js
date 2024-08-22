@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Dimensions } from 'react-native';
-import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
-import UserPool from '../../app/UserPool'
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  ImageBackground,
+  Dimensions,
+} from "react-native";
+import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
+import UserPool from "../../app/UserPool";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const UserAuthentication = () => {
+
   const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
@@ -19,7 +28,7 @@ const UserAuthentication = () => {
 
   const handleSignup = async () => {
     if (password !== confirmPassword) {
-      console.log('Passwords do not match');
+      console.log("Passwords do not match");
       return;
     }
 
@@ -27,18 +36,24 @@ const UserAuthentication = () => {
       Username: username,
       Password: password,
       Attributes: [
-        { Name: 'email', Value: email },
-        { Name: 'phone_number', Value: phoneNumber } 
+        { Name: "email", Value: email },
+        { Name: "phone_number", Value: phoneNumber },
       ],
     };
 
-    UserPool.signUp(signUpParams.Username, signUpParams.Password, signUpParams.Attributes, null, (err, data) => {
-      if (err) {
-        console.log('Error signing up:', err.message);
-      } else {
-        console.log('Sign up successful:', data);
+    UserPool.signUp(
+      signUpParams.Username,
+      signUpParams.Password,
+      signUpParams.Attributes,
+      null,
+      (err, data) => {
+        if (err) {
+          console.log("Error signing up:", err.message);
+        } else {
+          console.log("Sign up successful:", data);
+        }
       }
-    });
+    );
   };
 
   const handleLogin = async () => {
@@ -54,24 +69,24 @@ const UserAuthentication = () => {
 
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: (result) => {
-        console.log('Login successful:', result);
+        console.log("Login successful:", result);
       },
       onFailure: (err) => {
-        console.log('Error logging in:', err.message);
+        console.log("Error logging in:", err.message);
       },
     });
   };
 
   return (
     <ImageBackground
-      source={require('../../assets/images/banner2.png')} 
+      source={require("../../assets/images/banner2.png")}
       style={styles.background}
       resizeMode="cover"
     >
       <View style={styles.container}>
         <View style={styles.box}>
-          <Text style={styles.title}>{isLogin ? 'Login' : 'Signup'}</Text>
-          
+          <Text style={styles.title}>{isLogin ? "Login" : "Signup"}</Text>
+
           {!isLogin && (
             <TextInput
               style={styles.input}
@@ -80,7 +95,7 @@ const UserAuthentication = () => {
               onChangeText={setUsername}
             />
           )}
-          
+
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -88,7 +103,7 @@ const UserAuthentication = () => {
             value={email}
             onChangeText={setEmail}
           />
-          
+
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -96,7 +111,7 @@ const UserAuthentication = () => {
             value={password}
             onChangeText={setPassword}
           />
-          
+
           {!isLogin && (
             <>
               <TextInput
@@ -115,14 +130,21 @@ const UserAuthentication = () => {
               />
             </>
           )}
-          
-          <TouchableOpacity style={styles.button} onPress={isLogin ? handleLogin : handleSignup}>
-            <Text style={styles.buttonText}>{isLogin ? 'Login' : 'Signup'}</Text>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={isLogin ? handleLogin : handleSignup}
+          >
+            <Text style={styles.buttonText}>
+              {isLogin ? "Login" : "Signup"}
+            </Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity onPress={toggleForm}>
             <Text style={styles.toggleText}>
-              {isLogin ? "Don't have an account? Sign up" : "Already have an account? Login"}
+              {isLogin
+                ? "Don't have an account? Sign up"
+                : "Already have an account? Login"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -134,24 +156,24 @@ const UserAuthentication = () => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden'
+    width: "100%",
+    height: "100%",
+    overflow: "hidden",
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: '5%', 
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: "5%",
   },
   box: {
-    width: width * 0.8, 
-    maxWidth: 400, 
+    width: width * 0.8,
+    maxWidth: 400,
     padding: 20,
     top: -50,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -159,37 +181,37 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
-    color: '#8e2020',
+    textAlign: "center",
+    color: "#8e2020",
   },
   input: {
     height: 50,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
-    backgroundColor: '#f9f9f9',
-    color: '#8e2020',
+    backgroundColor: "#f9f9f9",
+    color: "#8e2020",
   },
   button: {
     height: 50,
-    backgroundColor: '#8e2020',
+    backgroundColor: "#8e2020",
     borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 15,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   toggleText: {
-    textAlign: 'center',
-    color: '#8e2020',
+    textAlign: "center",
+    color: "#8e2020",
     marginTop: 10,
   },
 });
