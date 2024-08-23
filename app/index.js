@@ -1,26 +1,28 @@
 import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Homepage from './screens/Homepage';
+import UserAuthentication from './screens/UserAuthentication';
 
-import { Provider } from 'react-native-paper';
-import { DefaultTheme } from 'react-native-paper';
-import Homepage from '../app/screens/Homepage';
-import UserAuthentication from '../app/screens/UserAuthentication';
+const Stack = createNativeStackNavigator();
 
-const theme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      primary: '#6200ee',
-      accent: '#03dac4',
-    },
-};
-
-export default function App() {
+const MyNavigator = () => {
   return (
-    <Provider theme={theme}>
-
-      <Homepage />
-      
-    </Provider>
-    
+    <Stack.Navigator initialRouteName="Home" screenOptions={{
+      headerShown: false, // Hide the header for all screens
+    }}>
+      <Stack.Screen name="Home" component={Homepage} />
+      <Stack.Screen name="UserAuthentication" component={UserAuthentication} />
+    </Stack.Navigator>
   );
 }
+
+const App = () => {
+  return (
+    <NavigationContainer independent={true}>
+      <MyNavigator />
+    </NavigationContainer>
+  );
+}
+
+export default App;

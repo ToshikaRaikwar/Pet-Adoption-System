@@ -25,7 +25,7 @@ export default function Homepage() {
     setActiveMenu(currentRoute);
   }, [route.name]);
 
-  const handleGetStarted = ({navigation}) => {
+  const handleGetStarted = () => {
     navigation.navigate('UserAuthentication');
   };
 
