@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, ImageB
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation, useRoute } from '@react-navigation/native'; 
 import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker'; // Import DocumentPicker
+import * as DocumentPicker from 'expo-document-picker'; 
 
 const themeColors = {
   primary: '#8e2020',  
@@ -13,13 +13,13 @@ const themeColors = {
   textSecondary: '#ffffff',
 };
 
-export default function Homepage() {
+export default function PetRegistration() {
   const navigation = useNavigation();
   const route = useRoute();
   const [activeMenu, setActiveMenu] = useState('Homepage');
   const [vaccinated, setVaccinated] = useState('Yes');
   const [petImage, setPetImage] = useState(null);
-  const [vaccinationCertificate, setVaccinationCertificate] = useState(null); // State for PDF file
+  const [vaccinationCertificate, setVaccinationCertificate] = useState(null); 
   const [ownerName, setOwnerName] = useState('');
   const [petName, setPetName] = useState('');
   const [petType, setPetType] = useState('');
@@ -37,7 +37,7 @@ export default function Homepage() {
 
   const handleMenuPress = (routeName) => {
     setActiveMenu(routeName);
-    navigation.navigate(routeName === 'Home' ? 'Homepage' : routeName);
+    navigation.navigate(routeName === 'Home' ? 'Home' : routeName);
   };
 
   const pickImage = async () => {
@@ -77,10 +77,10 @@ export default function Homepage() {
     if (vaccinated === 'Yes' && !vaccinationCertificate) formErrors.vaccinationCertificate = 'Vaccination certificate is required if vaccinated.';
 
     if (Object.keys(formErrors).length === 0) {
-      // All validations passed, submit the form
+      
       console.log('Form submitted');
     } else {
-      // Set the errors to state
+      
       setErrors(formErrors);
       Alert.alert('Error', 'Please fill out all fields correctly.');
     }

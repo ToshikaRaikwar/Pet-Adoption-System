@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Homepage from './screens/Homepage';
 import UserAuthentication from './screens/UserAuthentication';
-
+import PetRegistration from './screens/PetRegistration';
 const Stack = createNativeStackNavigator();
 
 const MyNavigator = () => {
@@ -13,6 +13,7 @@ const MyNavigator = () => {
     }}>
       <Stack.Screen name="Home" component={Homepage} />
       <Stack.Screen name="UserAuthentication" component={UserAuthentication} />
+      <Stack.Screen name="ListPet" component={PetRegistration} />
     </Stack.Navigator>
   );
 }
