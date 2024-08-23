@@ -15,17 +15,69 @@ const UserAuthentication = () => {
   const [otp, setOtp] = useState('');
   const [isFormComplete, setIsFormComplete] = useState(false);
 
+  const [usernameError, setUsernameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [phoneNumberError, setPhoneNumberError] = useState('');
+  const [otpError, setOtpError] = useState('');
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\+(\d{1,3})\s?(\d{6,14})$/;
+
+
   const toggleForm = () => {
     setIsLogin(!isLogin);
     setIsFormComplete(false); 
+    // Clear errors when toggling form
+    setUsernameError('');
+    setEmailError('');
+    setPasswordError('');
+    setConfirmPasswordError('');
+    setPhoneNumberError('');
+    setOtpError('');
   };
 
   const handleSignup = async () => {
-    if (password !== confirmPassword) {
-      console.log('Passwords do not match');
-      return;
+    let hasError = false;
+  
+    if (!username.trim()) {
+      setUsernameError('Username is required');
+      hasError = true;
+    } else {
+      setUsernameError('');
     }
-
+  
+    if (!email.trim() || !emailRegex.test(email)) {
+      setEmailError('A valid email is required');
+      hasError = true;
+    } else {
+      setEmailError('');
+    }
+  
+    if (!password.trim() || password.length < 6) {
+      setPasswordError('Password must be at least 6 characters long');
+      hasError = true;
+    } else {
+      setPasswordError('');
+    }
+  
+    if (password !== confirmPassword) {
+      setConfirmPasswordError('Passwords do not match');
+      hasError = true;
+    } else {
+      setConfirmPasswordError('');
+    }
+  
+    if (!phoneNumber.trim() || !phoneRegex.test(phoneNumber)) {
+      setPhoneNumberError('A valid phone number with country code is required');
+      hasError = true;
+    } else {
+      setPhoneNumberError('');
+    }
+  
+    if (hasError) return;
+  
     const signUpParams = {
       Username: username,
       Password: password,
@@ -34,10 +86,11 @@ const UserAuthentication = () => {
         { Name: 'phone_number', Value: phoneNumber },
       ],
     };
-
+  
     UserPool.signUp(signUpParams.Username, signUpParams.Password, signUpParams.Attributes, null, (err, data) => {
       if (err) {
         console.log('Error signing up:', err.message);
+        alert('Error signing up: ' + err.message);
       } else {
         console.log('Sign up successful:', data);
         setOtp('');
@@ -46,8 +99,16 @@ const UserAuthentication = () => {
       }
     });
   };
+  
 
   const handleOtpVerification = async () => {
+    if (!otp.trim()) {
+      setOtpError('OTP is required');
+      return;
+    } else {
+      setOtpError('');
+    }
+
     const user = new CognitoUser({
       Username: username,
       Pool: UserPool,
@@ -65,6 +126,20 @@ const UserAuthentication = () => {
   };
 
   const handleLogin = async () => {
+    if (!username.trim()) {
+      setUsernameError('Username is required');
+      return;
+    } else {
+      setUsernameError('');
+    }
+
+    if (!password.trim()) {
+      setPasswordError('Password is required');
+      return;
+    } else {
+      setPasswordError('');
+    }
+
     const authenticationDetails = new AuthenticationDetails({
       Username: username,
       Password: password,
@@ -81,6 +156,7 @@ const UserAuthentication = () => {
       },
       onFailure: (err) => {
         console.log('Error logging in:', err.message);
+        alert('Error logging in: ' + err.message);
       },
     });
   };
@@ -103,6 +179,8 @@ const UserAuthentication = () => {
                 value={username}
                 onChangeText={setUsername}
               />
+              {usernameError ? <Text style={styles.errorText}>{usernameError}</Text> : null}
+
               <TextInput
                 style={styles.input}
                 placeholder="Email"
@@ -110,6 +188,8 @@ const UserAuthentication = () => {
                 value={email}
                 onChangeText={setEmail}
               />
+              {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+
               <TextInput
                 style={styles.input}
                 placeholder="Password"
@@ -117,6 +197,8 @@ const UserAuthentication = () => {
                 value={password}
                 onChangeText={setPassword}
               />
+              {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+
               <TextInput
                 style={styles.input}
                 placeholder="Confirm Password"
@@ -124,6 +206,8 @@ const UserAuthentication = () => {
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
               />
+              {confirmPasswordError ? <Text style={styles.errorText}>{confirmPasswordError}</Text> : null}
+
               <TextInput
                 style={styles.input}
                 placeholder="Phone Number"
@@ -131,6 +215,8 @@ const UserAuthentication = () => {
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
               />
+              {phoneNumberError ? <Text style={styles.errorText}>{phoneNumberError}</Text> : null}
+
               {!isFormComplete && (
                 <TouchableOpacity style={styles.button} onPress={handleSignup}>
                   <Text style={styles.buttonText}>Signup</Text>
@@ -147,6 +233,8 @@ const UserAuthentication = () => {
                 value={otp}
                 onChangeText={setOtp}
               />
+              {otpError ? <Text style={styles.errorText}>{otpError}</Text> : null}
+
               <TouchableOpacity style={styles.button} onPress={handleOtpVerification}>
                 <Text style={styles.buttonText}>Verify OTP</Text>
               </TouchableOpacity>
@@ -161,6 +249,8 @@ const UserAuthentication = () => {
                 value={username}
                 onChangeText={setUsername}
               />
+              {usernameError ? <Text style={styles.errorText}>{usernameError}</Text> : null}
+
               <TextInput
                 style={styles.input}
                 placeholder="Password"
@@ -168,6 +258,8 @@ const UserAuthentication = () => {
                 value={password}
                 onChangeText={setPassword}
               />
+              {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+
               <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Login</Text>
               </TouchableOpacity>
@@ -245,6 +337,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#8e2020',
     marginTop: 10,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginBottom: 15,
   },
 });
 
