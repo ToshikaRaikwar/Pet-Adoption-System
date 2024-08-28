@@ -4,8 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { DefaultTheme, Provider } from 'react-native-paper';
 
-
-
 const themeColors = {
   primary: '#8e2020', 
   secondary: '#f0f0f0', 
@@ -39,7 +37,6 @@ export default function Homepage() {
       <View style={styles.header}>
         <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Profile')}>
           <Ionicons name="person-circle" size={36} color="white" />
-          {/* Empty Text component has been removed */}
         </TouchableOpacity>
         <Text style={styles.heading}>PET RESCUE</Text>
         <View style={{ width: 70 }} />

@@ -29,7 +29,6 @@ const UserAuthentication = () => {
   const toggleForm = () => {
     setIsLogin(!isLogin);
     setIsFormComplete(false); 
-    // Clear errors when toggling form
     setUsernameError('');
     setEmailError('');
     setPasswordError('');
